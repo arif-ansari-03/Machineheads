@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machineheads</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px; /* Adjusted margin to move the header closer to the top */
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 50px; /* Moved the container down towards the center */
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    label {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #0a2a4d;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 400px;
+      word-wrap: break-word;
+      margin: 0 auto; /* Center the output field horizontally */
+    }
+
+    /* Style for the download button */
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0a2a4d;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #08407c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Machineheads</h1>
+  
+  <div class="container">
+    <input type="file" id="fileInput" accept="image/*, video/*">
+    <label for="fileInput">Choose Image or Video</label>
+    <input type="text" id="output" readonly>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <script>
+    var firebaseConfig = {
+  apiKey: "AIzaSyBz59MD0xmXBlI5-2Cu0zGaDcGwJqsux38",
+  authDomain: "machineheads-1.firebaseapp.com",
+  projectId: "machineheads-1",
+  storageBucket: "machineheads-1.appspot.com",
+  messagingSenderId: "108937002849",
+  appId: "1:108937002849:web:f5e43597cb7d23376dcf20",
+  measurementId: "G-SHV4HF3EGH"
+};
+    firebase.initializeApp(firebaseConfig);
+
+    var storage = firebase.storage();
+    var database = firebase.database();
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+      var file = this.files[0];
+      var outputField = document.getElementById('output');
+
+      if (file) {
+        var fileType = file.type.split('/')[0];
+        if (fileType === 'image' || fileType === 'video') {
+          var storageRef = storage.ref('files/' + file.name);
+          storageRef.put(file).then(function(snapshot) {
+            console.log('Uploaded a blob or file!');
+            storageRef.getDownloadURL().then(function(url) {
+              outputField.value = 'File uploaded: ' + file.name + ' (' + fileType.toUpperCase() + ')';
+              
+              // Create a download button
+              var downloadBtn = document.createElement('a');
+              downloadBtn.href = url;
+              downloadBtn.download = file.name;
+              downloadBtn.textContent = 'Download';
+              document.body.appendChild(downloadBtn);
+            }).catch(function(error) {
+              console.error('Error generating download URL: ', error);
+            });
+          });
+        } else {
+          outputField.value = 'Invalid file type. Please upload an image or video.';
+          this.value = '';
+        }
+      } else {
+        outputField.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

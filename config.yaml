@@ -1,0 +1,16 @@
+path: /Users/aryanpatil/Downloads/Czech
+train: train/images
+val: train/images
+
+names:
+    0: longitudinal_crack
+    1: s1
+    2: s2
+    3: transverse_crack
+    4: s3
+    5: aligator_crack
+    6: pothole
+    7: s4
+    8: s5
+    9: s6
+    
